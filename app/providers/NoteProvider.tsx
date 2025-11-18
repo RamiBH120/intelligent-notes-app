@@ -1,0 +1,18 @@
+"use client"
+import { createContext, useState } from "react";
+
+type NoteProviderContextType = {
+    noteText: string;
+    setNoteText: React.Dispatch<React.SetStateAction<string>>;
+};
+
+
+export const NoteProviderContext = createContext<NoteProviderContextType | undefined>({
+    noteText: "",
+    setNoteText: () => {},
+});
+
+export function NoteProvider({ children }: { children: React.ReactNode }) {
+    const [noteText, setNoteText] = useState("");
+    return <NoteProviderContext.Provider value={{ noteText, setNoteText }}>{children}</NoteProviderContext.Provider>;
+}
