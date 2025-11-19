@@ -1,19 +1,27 @@
-import path from "node:path";
-import { defineConfig, env } from "prisma/config";
+import { defineConfig } from 'prisma';
+import 'dotenv/config'; // Import dotenv/config to load environment variables
 
 export default defineConfig({
-  schema: path.join("prisma", "schema.prisma"),
-  migrations: { 
-    path: path.join("db", "migrations"),
+  // Specify the path to your Prisma schema file
+  schema: './app/db/schema.prisma',
+
+  // Define the path for your Prisma migrations
+  migrations: {
+    path: './app/db/migrations', // Custom path for migration files
   },
-  views: { 
-    path: path.join("db", "views"),
-  },
-  typedSql: { 
-  path: path.join("db", "queries"),
-  },
-  engine: "classic",
-  datasource: { 
-    url: env("DATABASE_URL") 
-  }
+
+  // // (Optional) Define the path for your Prisma seed file
+  // seed: {
+  //   path: './prisma/seed.ts', // Custom path for the seed file
+  // },
+
+  // // (Optional) Configure Prisma Client generation
+  // client: {
+  //   output: './src/generated/prisma-client', // Custom output directory for Prisma Client
+  // },
+
+  // // (Optional) Define custom views path (if using Prisma Views)
+  // views: {
+  //   path: './db/views', // Custom path for view definitions
+  // },
 });
