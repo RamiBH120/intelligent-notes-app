@@ -57,7 +57,7 @@ function SidebarGroupContent({notes}: Props) {
                     {note?.text?.slice(0, 30) || "Untitled Note"}
                     </Link>
                     <SelectNoteButton note={note} />
-                    <DeleteNoteButton note={note} deleteNoteLocally={deleteNoteLocally} />
+                    <DeleteNoteButton noteId={note?.id} deleteNoteLocally={deleteNoteLocally} />
                 </SidebarMenu>
             )))}
         </SidebarMenu>
