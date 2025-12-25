@@ -1,5 +1,5 @@
 import { getUser } from "@/app/auth/server";
-import { prisma } from "@/app/db/prisma";
+import { prisma } from "@/lib/prisma";
 import {
   Sidebar,
   SidebarContent,
@@ -7,18 +7,14 @@ import {
   SidebarGroup,
   SidebarGroupLabel,
 } from "@/components/ui/sidebar"
-
-import { Note } from "@prisma/client";
 import Link from "next/link";
 import SidebarGroupContent from "./SidebarGroupContent";
+import { Note } from "@/lib/generated/prisma/client";
+import "@/app/styles/custom-scrollbar.css";
 
 async function AppSidebar() {
 
     const user = await getUser();
-
-    if (!user) {
-        return null;
-    }
 
     let notes:Note[] = [];
 
@@ -36,10 +32,10 @@ async function AppSidebar() {
 
   return (
     <Sidebar>
-      <SidebarContent>
+      <SidebarContent className="custom-scrollbar">
         
-        <SidebarGroup />
-        <SidebarGroupLabel className="my-2 text-lg">
+        <SidebarGroup>
+        <SidebarGroupLabel className="mb-2 mt-2 text-lg">
             {user ? (
                 notes.length > 0 ? "Recent Notes" : "You have no notes yet"
             ):(
@@ -50,6 +46,7 @@ async function AppSidebar() {
         </SidebarGroupLabel>
         
         {user && <SidebarGroupContent notes={notes} />}
+        </SidebarGroup>
       </SidebarContent>
       <SidebarFooter />
     </Sidebar>

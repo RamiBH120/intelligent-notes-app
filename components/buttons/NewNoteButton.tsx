@@ -19,26 +19,25 @@ function NewNoteButton({ user }: Props) {
 
     const handleAddNewNoteEvent = async () => {
         try {
-        if (!user) {
-            console.log("User not authenticated");
-            router.push("/login");
-            return;
-        }
-        else {
-            setLoading(true);
-            const uuid = uuidv4();
-            console.log("user id",user.id);
-            
-            await createNewNoteForUser(uuid,user.id);
-            router.push(`/?noteId=${uuid}`);
+            if (!user) {
+                console.log("User not authenticated");
+                router.push("/login");
+            }
+            else {
+                setLoading(true);
+                const uuid = uuidv4();
 
-            toast.success("New note created");
-        }
+                // Call server action that derives the user from server-side auth.
+                await createNewNoteForUser(uuid);
+                router.push(`/?noteId=${uuid}`);
+
+                toast.success("New note created");
+                setLoading(false);
+            }
         } catch (error) {
             console.error("Error creating new note:", error);
             toast.error("Failed to create new note");
-            setLoading(false);
-        }finally {
+        } finally {
             setLoading(false);
         }
     }

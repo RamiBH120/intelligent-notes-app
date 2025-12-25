@@ -39,7 +39,9 @@ const AuthForm = ({ type }: Props) => {
             }
 
             if (errorMessage) {
-                toast.error(errorMessage);
+                console.error(errorMessage);
+                
+                toast.error("Your credentials are invalid. Please try again.");
             } else {
                 toast.success(title, {
                     description: description,
@@ -55,16 +57,16 @@ const AuthForm = ({ type }: Props) => {
     return (
         <form action={handleSubmit} className="flex flex-col gap-4">
             <CardContent className="grid w-full gap-4">
-                <div className="flex flex-col gap-2">
+                <div className="flex flex-col space-y-2">
                     <Label htmlFor="email">Email</Label>
                     <Input type="email" id="email" name="email" required placeholder="Enter your email" disabled={isPendingLogin} />
                 </div>
-                <div className="flex flex-col gap-2">
+                <div className="flex flex-col space-y-2">
                     <Label htmlFor="password">Password</Label>
                     <Input type="password" id="password" name="password" required placeholder="Enter your password" disabled={isPendingLogin} />
                 </div>
             </CardContent>
-            <CardFooter className="mt-4 flex flex-col gap-2">
+            <CardFooter className="mt-4 flex flex-col gap-6">
                 <Button className="w-full" type="submit" disabled={isPendingLogin}>
                     {isPendingLogin ? <Loader2 className="animate-spin" /> : (isLoginForm ? "Login" : "Register")}
                 </Button>

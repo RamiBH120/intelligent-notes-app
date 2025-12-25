@@ -50,38 +50,50 @@ export async function updateSession(request: NextRequest) {
   // issues with users being randomly logged out.
 
   // IMPORTANT: Don't remove getClaims()
-  const AuthRoutes = ['/login', '/sign-up', '/reset-password'];
-  if (AuthRoutes.includes(request.nextUrl.pathname)) {
+  const isAuthRoute =
+    request.nextUrl.pathname === "/login" ||
+    request.nextUrl.pathname === "/sign-up";
 
-    const { data: { user } } = await supabase.auth.getUser();
+  if (isAuthRoute) {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
     if (user) {
-      return NextResponse.redirect(new URL('/', process.env.NEXT_PUBLIC_BASE_URL));
+      return NextResponse.redirect(
+        new URL("/", process.env.NEXT_PUBLIC_BASE_URL),
+      );
     }
   }
 
   const { searchParams, pathname } = new URL(request.url);
 
-  if (!searchParams.get('noteId') && pathname === '/') {
-    const { data: { user } } = await supabase.auth.getUser();
+  if (!searchParams.get("noteId") && pathname === "/") {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
 
     if (user) {
-      const { newestNoteId } = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/notes/get-newest?userId=${user.id}`)
-        .then(res => res.json());
+      const { newestNoteId } = await fetch(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/fetch-newest-note?userId=${user.id}`,
+      ).then((res) => res.json());
 
       if (newestNoteId) {
-        return NextResponse.redirect(new URL(`/?noteId=${newestNoteId}`, process.env.NEXT_PUBLIC_BASE_URL));
-      }
-      else {
-        const { noteId } = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/notes/create-new?userId=${user.id}`,
+        const url = request.nextUrl.clone();
+        url.searchParams.set("noteId", newestNoteId);
+        return NextResponse.redirect(url);
+      } else {
+        const { noteId } = await fetch(
+          `${process.env.NEXT_PUBLIC_BASE_URL}/api/create-new-note?userId=${user.id}`,
           {
-            method: 'POST',
+            method: "POST",
             headers: {
-              'Content-Type': 'application/json'
-            }
-          }
-        )
-          .then(res => res.json());
-        return NextResponse.redirect(new URL(`/?noteId=${noteId}`, process.env.NEXT_PUBLIC_BASE_URL));
+              "Content-Type": "application/json",
+            },
+          },
+        ).then((res) => res.json());
+        const url = request.nextUrl.clone();
+        url.searchParams.set("noteId", noteId);
+        return NextResponse.redirect(url);
       }
     }
   }

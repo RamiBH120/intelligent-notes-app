@@ -1,4 +1,5 @@
 "use client";
+import { User } from "@supabase/supabase-js";
 import { Button } from "@/components/ui/button"
 import {
     Dialog,
@@ -10,13 +11,14 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog"
-import { Label } from "@/components/ui/label"
-import { User } from "@supabase/supabase-js";
-import { useRouter } from "next/navigation";
 import { Fragment, useRef, useState, useTransition } from "react";
+import { Label } from "@/components/ui/label"
+import { useRouter } from "next/navigation";
 import { Textarea } from "../ui/textarea";
-import { ArrowUp, ArrowUpIcon } from "lucide-react";
+import { ArrowUpIcon } from "lucide-react";
 import { askAIAboutNotesAction } from "@/app/actions/notes";
+import "@/app/styles/ai-response.css";
+import "@/app/styles/custom-scrollbar.css";
 
 type Props = {
     user: User | null;
@@ -34,7 +36,6 @@ function AskAIButton({ user }: Props) {
     const handleOnOpenChange = (isOpen: boolean) => {
         if (!user) {
             router.push('/login');
-            return;
         }
         else {
 
@@ -52,7 +53,6 @@ function AskAIButton({ user }: Props) {
     const contentRef = useRef<HTMLDivElement>(null);
 
     const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-        setQuestionText(e.target.value);
         const textarea = textareRef.current;
         if (textarea) {
             textarea.style.height = "auto";
@@ -64,23 +64,18 @@ function AskAIButton({ user }: Props) {
         textareRef.current?.focus();
     }
 
-    const handleSubmit = async (e: React.FormEvent) => {
+    const handleSubmit = (e: React.FormEvent) => {
         if (!questionText.trim()) return;
 
         const newQuestions = [...questions, questionText.trim()];
         setQuestions(newQuestions);
         setQuestionText("");
-        setTimeout(() => {
-            scrollToBottom();
-        }, 100);
+        setTimeout(scrollToBottom, 100);
 
         startTransition(async () => {
             const response = await askAIAboutNotesAction(newQuestions, responses);
-            const newResponses = [...responses, response];
-            setResponses(newResponses);
-            setTimeout(() => {
-                scrollToBottom();
-            }, 100);
+            setResponses((prev) => [...prev, response]);
+            setTimeout(scrollToBottom, 100);
         })
     }
 
@@ -94,7 +89,7 @@ function AskAIButton({ user }: Props) {
     const handleKeyDown = async (e: React.KeyboardEvent) => {
         if (e.key === "Enter" && !e.shiftKey) {
             e.preventDefault();
-            await handleSubmit(e);
+            handleSubmit(e);
         }
     }
 
@@ -104,37 +99,48 @@ function AskAIButton({ user }: Props) {
                 <DialogTrigger asChild>
                     <Button variant="outline">Ask AI</Button>
                 </DialogTrigger>
-                <DialogContent className="sm:max-w-[425px] flex flex-col h-[80vh] max-w-3xl overflow-y-auto" ref={contentRef}>
+                <DialogContent className="custom-scrollbar sm:max-w-106.25 flex flex-col h-[80vh] max-w-3xl overflow-y-auto" ref={contentRef}>
                     <DialogHeader>
                         <DialogTitle>Ask AI</DialogTitle>
                         <DialogDescription>
                             Ask any question and get an AI-generated response about your written notes.
                         </DialogDescription>
                     </DialogHeader>
-                    <div className="flex flex-col gap-4 mb-4">
+                    <div className="flex flex-col gap-8 mt-4">
                         {questions.map((question, index) => (
                             <Fragment key={index}>
                                 <p className="text-muted-foreground bg-muted ml-auto px-2 py-1 text-sm rounded-md max-w-2xl">{question}</p>
-                                <p dangerouslySetInnerHTML={{ __html: responses[index] }} />
+                                {responses[index] && (
+                                    <p className="bot-response max-w-2xl text-muted-foreground px-2 py-1 rounded-md"
+                                        dangerouslySetInnerHTML={{ __html: responses[index] }} />
+                                )}
                             </Fragment>
                         ))}
-                        {isPending && (<p className="animate-pulse text-sm">Loading...</p>)}
+                        {isPending && (<p className="animate-pulse text-sm">Thinking...</p>)}
                     </div>
-                    <div className="mt-auto flex flex-col w-full cursor-text bg-accent p-4 rounded-md"
-                        onClick={handleClickInput}>
+                    <div
+                        className="mt-auto flex cursor-text flex-col rounded-lg border p-4"
+                        onClick={handleClickInput}
+                    >
                         <Label htmlFor="question" className="mb-2">Your Question</Label>
                         <Textarea
-                            id="question"
                             ref={textareRef}
                             value={questionText}
-                            onChange={handleInputChange}
+                            onChange={(e) => setQuestionText(e.target.value)}
+                            onInput={handleInputChange}
                             onKeyDown={handleKeyDown}
+                            style={{
+                                minHeight: "0",
+                                lineHeight: "normal"
+                            }}
                             placeholder="Type your question here..."
                             className="w-full overflow-hidden placeholder:text-muted-foreground p-0 resize-none rounded-none border-none
                                 focus:ring-0 focus:ring-offset-0 bg-transparent shadow-none"
                             rows={1}
                         />
-                        <Button type="submit" className="mt-2 self-end"><ArrowUpIcon className="text-muted" /></Button>
+                        <Button className="mt-2 self-end ml-auto rounded-full size-8">
+                            <ArrowUpIcon className="text-background" />
+                        </Button>
                     </div>
                     <DialogFooter>
                         <DialogClose asChild>

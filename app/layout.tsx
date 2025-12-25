@@ -17,8 +17,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body suppressHydrationWarning
+    <html lang="en" suppressHydrationWarning>
+      <body
       >
         <ThemeProvider
           attribute="class"
@@ -29,13 +29,14 @@ export default function RootLayout({
           <NoteProvider>
           <SidebarProvider>
             <AppSidebar />
-            <div className="fixed min-h-screen w-full bg-white dark:bg-black flex flex-col" >
-              <Header />
-              <main className="flex flex-1 flex-col px-4 pt-4 xl:px-8 w-full h-full overflow-auto">
+            <div className="flex min-h-screen w-full flex-col">
+                <Header />
 
-                {children}
-              </main>
-            </div></SidebarProvider>
+                <main className="flex flex-1 flex-col px-4 pt-10 xl:px-8">
+                  {children}
+                </main>
+              </div>
+            </SidebarProvider>
 
           <Toaster /></NoteProvider>
         </ThemeProvider>

@@ -1,6 +1,6 @@
 import AskAIButton from "@/components/buttons/AskAIButton";
 import { getUser } from "./auth/server";
-import { prisma } from "./db/prisma";
+import { prisma } from "@/lib/prisma";
 import NewNoteButton from "@/components/buttons/NewNoteButton";
 import NoteTextInput from "@/components/NoteTextInput";
 
@@ -10,7 +10,7 @@ type Props = {
 
 export default async function Home({ searchParams }: Props) {
 
-  const noteIdParam = (await searchParams).noteId as string | undefined;
+  const noteIdParam = (await searchParams).noteId;
 
   const user = await getUser();
 
