@@ -1,12 +1,12 @@
 "use client";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { CardContent, CardFooter } from "./ui/card";
-import { Label } from "./ui/label";
-import { Input } from "./ui/input";
+import { CardContent, CardFooter } from "../ui/card";
+import { Label } from "../ui/label";
+import { Input } from "../ui/input";
 import React from "react";
-import { Button } from "./ui/button";
-import { Loader2 } from "lucide-react";
+import { Button } from "../ui/button";
+import { Eye, EyeClosed, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { loginUserAction, registerUserAction } from "@/app/actions/users";
 
@@ -19,6 +19,7 @@ const AuthForm = ({ type }: Props) => {
 
     const router = useRouter();
     const [isPendingLogin, startLoginTransition] = React.useTransition();
+    const [showPassword, setShowPassword] = React.useState(false);
 
     const handleSubmit = (form: FormData) => {
         startLoginTransition(async () => {
@@ -31,22 +32,25 @@ const AuthForm = ({ type }: Props) => {
                 errorMessage = (await loginUserAction(email, password)).errorMessage;
                 title = "Logged In";
                 description = "You have successfully logged in.";
+                router.replace("/");
             }
             else {
                 errorMessage = (await registerUserAction(email, password)).errorMessage;
                 title = "Registered";
                 description = "You have successfully registered.";
+                router.replace("/login");
             }
 
             if (errorMessage) {
-                console.error(errorMessage);
-                
-                toast.error("Your credentials are invalid. Please try again.");
+                toast.error(errorMessage);
+                if (!isLoginForm)
+                    router.replace("/sign-up");
+                else
+                    router.replace("/login");
             } else {
                 toast.success(title, {
                     description: description,
                 });
-                router.replace("/");
             }
 
         });
@@ -61,9 +65,20 @@ const AuthForm = ({ type }: Props) => {
                     <Label htmlFor="email">Email</Label>
                     <Input type="email" id="email" name="email" required placeholder="Enter your email" disabled={isPendingLogin} />
                 </div>
-                <div className="flex flex-col space-y-2">
+                <div className="flex flex-col space-y-2 relative">
                     <Label htmlFor="password">Password</Label>
-                    <Input type="password" id="password" name="password" required placeholder="Enter your password" disabled={isPendingLogin} />
+                    <Input type={showPassword ? "text" : "password"} id="password" name="password" required placeholder="Enter your password" disabled={isPendingLogin} />
+                    <div className="mt-2 flex items-center"></div>
+                    <input
+                        type="checkbox"
+                        id="showPassword"
+                        checked={showPassword}
+                        onChange={() => setShowPassword(!showPassword)}
+                        disabled={isPendingLogin}
+                        title="Show Password"
+                        className="absolute right-0 top-8 appearance-none h-4 w-4 border border-gray-300 rounded-sm bg-white checked:bg-blue-500 checked:border-blue-500 focus:outline-none transition duration-200 mr-2 cursor-pointer"
+                    />
+                    {showPassword ? <EyeClosed className="absolute right-2 top-8 size-4 text-black pointer-events-none" /> : <Eye className="absolute right-2 top-8 size-4 text-black pointer-events-none" />}
                 </div>
             </CardContent>
             <CardFooter className="mt-4 flex flex-col gap-6">

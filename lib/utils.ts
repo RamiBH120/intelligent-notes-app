@@ -10,7 +10,9 @@ export const handleError = (error: unknown) => {
     let errorMessage = "An unknown error occurred.";
 
     if (error instanceof Error) {
-        errorMessage = error.message;
+        errorMessage = (error as any).code === "P2002"
+            ? "A record with this value already exists."
+            : error.message;
     }
     else if (typeof error === "string") {
         errorMessage = error;

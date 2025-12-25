@@ -1,13 +1,13 @@
 "use client";
 
 import { Note } from "@/lib/generated/prisma/client";
-import { SidebarGroupContent as SidebarGroupContentShad, SidebarMenu } from "./ui/sidebar";
+import { SidebarGroupContent as SidebarGroupContentShad, SidebarMenu } from "../ui/sidebar";
 import { Loader2, SearchIcon } from "lucide-react";
-import { Input } from "./ui/input";
+import { Input } from "../ui/input";
 import { useEffect, useMemo, useState } from "react";
 import Fuse from "fuse.js";
-import SelectNoteButton from "./buttons/SelectNoteButton";
-import DeleteNoteButton from "./buttons/DeleteNoteButton";
+import SelectNoteButton from "../buttons/SelectNoteButton";
+import DeleteNoteButton from "../buttons/DeleteNoteButton";
 
 type Props = {
     notes: Note[];

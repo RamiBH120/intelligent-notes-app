@@ -159,7 +159,7 @@ export async function askAIAboutNotesAction(questions: string[], responses: stri
         }
 
         const completion = await openai.chat.completions.create({
-            model: "gpt-4o-mini",
+            model: "gpt-5-mini",
             messages,
         });
 

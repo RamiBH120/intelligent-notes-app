@@ -39,7 +39,7 @@ async function AppSidebar() {
             {user ? (
                 notes.length > 0 ? "Recent Notes" : "You have no notes yet"
             ):(
-                <p>
+                <p className="text-sm text-justify mt-2">
                     <Link href="/login" className="underline">Please log in</Link> to see your notes
                 </p>
             )}

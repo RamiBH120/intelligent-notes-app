@@ -1,7 +1,7 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
-import { Textarea } from "./ui/textarea";
+import { Textarea } from "../ui/textarea";
 import { useEffect } from "react";
 import { debounceDelay } from "@/lib/constants";
 import useNote from "@/hooks/useNote";

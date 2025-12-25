@@ -2,10 +2,11 @@ import type { Metadata } from "next";
 import "./styles/globals.css";
 import { ThemeProvider } from "./providers/ThemeProvider";
 import { Toaster } from "sonner";
-import Header from "@/components/Header";
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
-import AppSidebar from "@/components/AppSidebar";
+import Header from "@/components/sections/Header";
+import { SidebarProvider } from "@/components/ui/sidebar";
+import AppSidebar from "@/components/sections/AppSidebar";
 import { NoteProvider } from "./providers/NoteProvider";
+import Footer from "@/components/sections/Footer";
 
 export const metadata: Metadata = {
   title: "Intelligent Notes App",
@@ -27,18 +28,19 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <NoteProvider>
-          <SidebarProvider>
-            <AppSidebar />
-            <div className="flex min-h-screen w-full flex-col">
+            <SidebarProvider>
+              <AppSidebar />
+              <div className="flex min-h-screen w-full flex-col">
                 <Header />
 
                 <main className="flex flex-1 flex-col px-4 pt-10 xl:px-8">
                   {children}
                 </main>
+                <Footer />
               </div>
             </SidebarProvider>
 
-          <Toaster /></NoteProvider>
+            <Toaster /></NoteProvider>
         </ThemeProvider>
       </body>
     </html>

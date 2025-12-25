@@ -97,7 +97,7 @@ function AskAIButton({ user }: Props) {
         <Dialog open={open} onOpenChange={handleOnOpenChange}>
             <form>
                 <DialogTrigger asChild>
-                    <Button variant="outline">Ask AI</Button>
+                    <Button variant="default">Ask AI</Button>
                 </DialogTrigger>
                 <DialogContent className="custom-scrollbar sm:max-w-106.25 flex flex-col h-[80vh] max-w-3xl overflow-y-auto" ref={contentRef}>
                     <DialogHeader>

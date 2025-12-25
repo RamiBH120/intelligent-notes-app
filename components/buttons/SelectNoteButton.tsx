@@ -3,7 +3,7 @@ import useNote from "@/hooks/useNote";
 import { Note } from "@/lib/generated/prisma/client";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import { SidebarMenuButton, SidebarMenuItem } from "../ui/sidebar";
+import { SidebarMenuButton } from "../ui/sidebar";
 import Link from "next/link";
 
 type SelectNoteButtonProps = {
