@@ -12,13 +12,14 @@ import {
     DialogTrigger,
 } from "@/components/ui/dialog"
 import { Fragment, useRef, useState, useTransition } from "react";
-import { Label } from "@/components/ui/label"
 import { useRouter } from "next/navigation";
 import { Textarea } from "../ui/textarea";
 import { ArrowUpIcon } from "lucide-react";
-import { askAIAboutNotesAction } from "@/app/actions/notes";
+import { askGeminiAboutNotesAction } from "@/app/actions/ai";
 import "@/app/styles/ai-response.css";
 import "@/app/styles/custom-scrollbar.css";
+import { handleKeyDown, scrollToBottom } from "@/lib/utils";
+import { toast } from "sonner";
 
 type Props = {
     user: User | null;
@@ -70,36 +71,30 @@ function AskAIButton({ user }: Props) {
         const newQuestions = [...questions, questionText.trim()];
         setQuestions(newQuestions);
         setQuestionText("");
-        setTimeout(scrollToBottom, 100);
+        setTimeout(() => scrollToBottom(contentRef), 100);
 
         startTransition(async () => {
-            const response = await askAIAboutNotesAction(newQuestions, responses);
-            setResponses((prev) => [...prev, response]);
-            setTimeout(scrollToBottom, 100);
+            try {
+                const response = await askGeminiAboutNotesAction(newQuestions, responses);
+                setResponses((prev) => [...prev, response]);
+                setTimeout(() => scrollToBottom(contentRef), 100);
+            } catch (error: any) {
+                setResponses((prev) => [...prev, `<p class="text-red-500">Error: ${error.message}</p>`]);
+                setTimeout(() => scrollToBottom(contentRef), 100);
+                toast.error(`Failed to get AI response: ${error.message}`);
+            }
         })
     }
 
-    const scrollToBottom = () => {
-        contentRef.current?.scrollTo({
-            top: contentRef.current.scrollHeight,
-            behavior: "smooth"
-        });
-    }
-
-    const handleKeyDown = async (e: React.KeyboardEvent) => {
-        if (e.key === "Enter" && !e.shiftKey) {
-            e.preventDefault();
-            handleSubmit(e);
-        }
-    }
+    
 
     return (
         <Dialog open={open} onOpenChange={handleOnOpenChange}>
             <form>
                 <DialogTrigger asChild>
-                    <Button variant="default">Ask AI</Button>
+                    <Button variant="secondary">Ask AI</Button>
                 </DialogTrigger>
-                <DialogContent className="custom-scrollbar sm:max-w-106.25 flex flex-col h-[80vh] max-w-3xl overflow-y-auto" ref={contentRef}>
+                <DialogContent className="custom-scrollbar flex flex-col h-[85vh] max-w-4xl overflow-y-auto" ref={contentRef}>
                     <DialogHeader>
                         <DialogTitle>Ask AI</DialogTitle>
                         <DialogDescription>
@@ -122,23 +117,22 @@ function AskAIButton({ user }: Props) {
                         className="mt-auto flex cursor-text flex-col rounded-lg border p-4"
                         onClick={handleClickInput}
                     >
-                        <Label htmlFor="question" className="mb-2">Your Question</Label>
                         <Textarea
                             ref={textareRef}
                             value={questionText}
                             onChange={(e) => setQuestionText(e.target.value)}
                             onInput={handleInputChange}
-                            onKeyDown={handleKeyDown}
+                            onKeyDown={(e) => handleKeyDown(e, handleSubmit)}
                             style={{
                                 minHeight: "0",
                                 lineHeight: "normal"
                             }}
-                            placeholder="Type your question here..."
-                            className="w-full overflow-hidden placeholder:text-muted-foreground p-0 resize-none rounded-none border-none
-                                focus:ring-0 focus:ring-offset-0 bg-transparent shadow-none"
+                            placeholder="Ask me anything about your past notes..."
+                            className="placeholder:text-muted-foreground p-0 resize-none rounded-none border-none
+                                focus-visible:ring-0 focus-visible:ring-offset-0 bg-transparent shadow-none"
                             rows={1}
                         />
-                        <Button className="mt-2 self-end ml-auto rounded-full size-8">
+                        <Button className="ml-auto rounded-full size-8">
                             <ArrowUpIcon className="text-background" />
                         </Button>
                     </div>

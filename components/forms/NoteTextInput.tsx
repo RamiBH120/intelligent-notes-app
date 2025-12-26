@@ -6,6 +6,7 @@ import { useEffect } from "react";
 import { debounceDelay } from "@/lib/constants";
 import useNote from "@/hooks/useNote";
 import { updateNoteAction } from "@/app/actions/notes";
+import "@/app/styles/custom-scrollbar.css";
 
 type Props = {
     noteId: string | string[] | undefined | null;
@@ -31,9 +32,7 @@ function NoteTextInput({ noteId, startingNoteText }: Props) {
 
         setNoteText(newText);
 
-        if (updateTimeout) {
-            clearTimeout(updateTimeout);
-        }
+        clearTimeout(updateTimeout);
 
         updateTimeout = setTimeout(async () => {
             updateNoteAction(noteId as string, newText);
@@ -43,8 +42,8 @@ function NoteTextInput({ noteId, startingNoteText }: Props) {
     return <Textarea
         value={noteText}
         onChange={handleChangeNoteText}
-        placeholder="Type your note text here"
-        className="placeholder:text-muted-foreground mb-4 h-full max-w-2xl resize-none border p-4 focus-visible:ring-0 focus-visible:ring-offset-0" />;
+        placeholder="Type your note text here..."
+        className="custom-scrollbar placeholder:text-muted-foreground mb-4 h-full max-w-4xl resize-none border p-4 focus-visible:ring-0 focus-visible:ring-offset-0" />;
 
 }
 

@@ -49,9 +49,9 @@ function DeleteNoteButton({ noteId, deleteNoteLocally }: DeleteNoteButtonProps) 
   }
   return (
     <AlertDialog>
-      <AlertDialogTrigger>
-        <Button variant="ghost" className="absolute top-2 right-2 size-7 -translate-y-2 p-0 opacity-0 group-hover/items:opacity-100 [&_svg]:size-3">
-          Delete Note <Trash2 /></Button>
+      <AlertDialogTrigger asChild>
+        <Button variant="ghost" className="absolute top-1/2 right-2 size-7 -translate-y-1/2 p-0 opacity-0 group-hover/items:opacity-100 [&_svg]:size-3">
+          <Trash2 /></Button>
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
@@ -62,7 +62,7 @@ function DeleteNoteButton({ noteId, deleteNoteLocally }: DeleteNoteButtonProps) 
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <AlertDialogAction onClick={handleDeleteNote} className="bg-destructive text-destructive hover:bg-destructive/50 w-24">Continue</AlertDialogAction>
+          <AlertDialogAction onClick={handleDeleteNote} className="bg-destructive text-destructive hover:bg-destructive/90 w-24">Continue</AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

@@ -2,7 +2,7 @@ import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
 
 export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs))
+    return twMerge(clsx(inputs))
 }
 
 export const handleError = (error: unknown) => {
@@ -21,4 +21,18 @@ export const handleError = (error: unknown) => {
     return {
         errorMessage,
     };
+}
+
+export const scrollToBottom = (contentRef: React.RefObject<HTMLDivElement | null>) => {
+    contentRef?.current?.scrollTo({
+        top: contentRef.current.scrollHeight,
+        behavior: "smooth"
+    });
+}
+
+export const handleKeyDown = async (e: React.KeyboardEvent, handleSubmit: (e: React.FormEvent) => void) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault();
+        handleSubmit(e);
+    }
 }

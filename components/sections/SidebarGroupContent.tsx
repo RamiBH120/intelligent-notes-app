@@ -1,7 +1,7 @@
 "use client";
 
 import { Note } from "@/lib/generated/prisma/client";
-import { SidebarGroupContent as SidebarGroupContentShad, SidebarMenu } from "../ui/sidebar";
+import { SidebarGroupContent as SidebarGroupContentShad, SidebarMenu, SidebarMenuItem } from "../ui/sidebar";
 import { Loader2, SearchIcon } from "lucide-react";
 import { Input } from "../ui/input";
 import { useEffect, useMemo, useState } from "react";
@@ -39,7 +39,9 @@ function SidebarGroupContent({notes}: Props) {
     }
 
     const deleteNoteLocally = (noteId: string) => {
-        setLocalNotes((prevNotes) => prevNotes ? prevNotes.filter(note => note.id !== noteId) : []);
+        setLocalNotes((prevNotes) => 
+            prevNotes.filter(note => note.id !== noteId)
+    );
     }
     return (
     <SidebarGroupContentShad>
@@ -48,14 +50,15 @@ function SidebarGroupContent({notes}: Props) {
             <Input className="bg-muted pl-8" placeholder="Search notes..." value={searchText} onChange={handleSearchText} />
         </div>
         <SidebarMenu className="mt-4">
-            {notes.length === 0 ? (<Loader2 className="animate-spin" />) : (filteredNotes?.map((note: Note) => (
-                <SidebarMenu key={note.id} className="group/item">
+            {localNotes.length === 0 ? (<Loader2 className="animate-spin" />) : (filteredNotes?.map((note: Note) => (
+
+                <SidebarMenuItem key={note.id} className="group/item">
                     {/* <Link href={`/?noteId=${note.id}`} className="w-full">
                     {note?.text?.slice(0, 30) || "Untitled Note"}
                     </Link> */}
                     <SelectNoteButton note={note} />
                     <DeleteNoteButton noteId={note?.id} deleteNoteLocally={deleteNoteLocally} />
-                </SidebarMenu>
+                </SidebarMenuItem>
             )))}
         </SidebarMenu>
     </SidebarGroupContentShad>);

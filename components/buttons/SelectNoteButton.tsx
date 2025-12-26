@@ -28,16 +28,17 @@ function SelectNoteButton({ note }: SelectNoteButtonProps) {
             setLocalNoteText(selectedNoteText);
         }
     }, [selectedNoteText, shouldUseGlobalNoteText]);
-    const blankNoteText = selectedNoteText.trim() === "";
-    let noteTextToDisplay = shouldUseGlobalNoteText ? selectedNoteText : localNoteText;
-    if (blankNoteText && !shouldUseGlobalNoteText) {
-        noteTextToDisplay = localNoteText;
+    const blankNoteText = "Empty Note";
+    
+    let noteTextToDisplay = localNoteText || blankNoteText;
+    if(shouldUseGlobalNoteText){
+        noteTextToDisplay = selectedNoteText || blankNoteText;
     }
 
     return (
-        <SidebarMenuButton asChild className={`items-start gap-2 pr-12 ${noteId === note.id ? "bg-accent" : ""}`}>
+        <SidebarMenuButton asChild className={`items-start gap-2 pr-12 ${noteId === note.id && "bg-sidebar-accent/50 text-primary"}`}>
             <Link href={`/?noteId=${note.id}`} className="flex flex-col w-full h-fit py-2">
-                <p className="w-full overflow-hidden truncate text-ellipsis whitespace-nowrap">{noteTextToDisplay}</p>
+                <p className="w-full overflow-hidden truncate text-ellipsis whitespace-nowrap">{noteTextToDisplay !== "" ? noteTextToDisplay : "Untitled Note"}</p>
                 <p className="text-muted-foreground text-xs">{note.createdAt.toLocaleDateString()}</p>
             </Link>
         </SidebarMenuButton>

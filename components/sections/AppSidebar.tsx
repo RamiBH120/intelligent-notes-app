@@ -1,5 +1,4 @@
 import { getUser } from "@/app/auth/server";
-import { prisma } from "@/lib/prisma";
 import {
   Sidebar,
   SidebarContent,
@@ -11,41 +10,39 @@ import Link from "next/link";
 import SidebarGroupContent from "./SidebarGroupContent";
 import { Note } from "@/lib/generated/prisma/client";
 import "@/app/styles/custom-scrollbar.css";
+import { getNotesForUser } from "@/app/actions/notes";
+import { toast } from "sonner";
 
 async function AppSidebar() {
 
-    const user = await getUser();
+  const user = await getUser();
 
-    let notes:Note[] = [];
+  let notes: Note[] = [];
 
-    if(user){
-        notes = await prisma.note.findMany({
-            where: {
-                authorId: user.id,
-            },
-            orderBy: {
-                updatedAt: 'desc',
-            },
-            take: 5,
-        });
-    }
+  if (user) {
+    let result = await getNotesForUser();
+    if (result instanceof Array)
+      notes = result;
+    else
+      toast.error("Error fetching notes: " + result);
+  }
 
   return (
     <Sidebar>
       <SidebarContent className="custom-scrollbar">
-        
+
         <SidebarGroup>
-        <SidebarGroupLabel className="mb-2 mt-2 text-lg">
+          <SidebarGroupLabel className="mb-2 mt-2 text-lg">
             {user ? (
-                notes.length > 0 ? "Recent Notes" : "You have no notes yet"
-            ):(
-                <p className="text-sm text-justify mt-2">
-                    <Link href="/login" className="underline">Please log in</Link> to see your notes
-                </p>
+              notes.length > 0 ? `${notes.length} Recent Notes` : "You have no notes yet"
+            ) : (
+              <p className="text-sm text-justify mt-2">
+                <Link href="/login" className="underline">Please log in</Link> to see your notes
+              </p>
             )}
-        </SidebarGroupLabel>
-        
-        {user && <SidebarGroupContent notes={notes} />}
+          </SidebarGroupLabel>
+
+          {user && <SidebarGroupContent notes={notes} />}
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter />
