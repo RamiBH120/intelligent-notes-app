@@ -5,6 +5,7 @@ import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { SidebarMenuButton } from "../ui/sidebar";
 import Link from "next/link";
+import { filterHtmlTags } from "@/lib/utils";
 
 type SelectNoteButtonProps = {
     note: Note;
@@ -32,7 +33,7 @@ function SelectNoteButton({ note }: SelectNoteButtonProps) {
     
     let noteTextToDisplay = localNoteText || blankNoteText;
     if(shouldUseGlobalNoteText){
-        noteTextToDisplay = selectedNoteText || blankNoteText;
+        noteTextToDisplay = filterHtmlTags(selectedNoteText) || blankNoteText;
     }
 
     return (

@@ -3,10 +3,8 @@ import { User } from "@supabase/supabase-js";
 import { Button } from "@/components/ui/button"
 import {
     Dialog,
-    DialogClose,
     DialogContent,
     DialogDescription,
-    DialogFooter,
     DialogHeader,
     DialogTitle,
     DialogTrigger,
@@ -14,7 +12,7 @@ import {
 import { Fragment, useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { Textarea } from "../ui/textarea";
-import { ArrowUpIcon } from "lucide-react";
+import { ArrowUpIcon, NotebookTabsIcon } from "lucide-react";
 import { askGeminiAboutNotesAction } from "@/app/actions/ai";
 import "@/app/styles/ai-response.css";
 import "@/app/styles/custom-scrollbar.css";
@@ -92,11 +90,11 @@ function AskAIButton({ user }: Props) {
         <Dialog open={open} onOpenChange={handleOnOpenChange}>
             <form>
                 <DialogTrigger asChild>
-                    <Button variant="secondary">Ask AI</Button>
+                    <Button variant="secondary"> <NotebookTabsIcon size={16} /> Ask AI</Button>
                 </DialogTrigger>
                 <DialogContent className="custom-scrollbar flex flex-col h-[85vh] max-w-4xl overflow-y-auto" ref={contentRef}>
                     <DialogHeader>
-                        <DialogTitle>Ask AI</DialogTitle>
+                        <DialogTitle>Ask about your notes with AI</DialogTitle>
                         <DialogDescription>
                             Ask any question and get an AI-generated response about your written notes.
                         </DialogDescription>
@@ -129,18 +127,18 @@ function AskAIButton({ user }: Props) {
                             }}
                             placeholder="Ask me anything about your past notes..."
                             className="placeholder:text-muted-foreground p-0 resize-none rounded-none border-none
-                                focus-visible:ring-0 focus-visible:ring-offset-0 bg-transparent shadow-none"
+                                focus-visible:ring-0 focus-visible:ring-offset-0 bg-accent-foreground shadow-none"
                             rows={1}
                         />
                         <Button className="ml-auto rounded-full size-8">
                             <ArrowUpIcon className="text-background" />
                         </Button>
                     </div>
-                    <DialogFooter>
+                    {/* <DialogFooter>
                         <DialogClose asChild>
-                            <Button variant="outline">Cancel</Button>
+                            <Button variant="outline"> <FileXIcon size={16} /> Cancel</Button>
                         </DialogClose>
-                    </DialogFooter>
+                    </DialogFooter> */}
                 </DialogContent>
             </form>
         </Dialog>

@@ -12,21 +12,23 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 import { Button } from "../ui/button";
-import { Trash2 } from "lucide-react";
+import { AlertCircleIcon, Loader2, Trash2 } from "lucide-react";
 import { useTransition } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 import { deleteNoteAction } from "@/app/actions/notes";
+import useNote from "@/hooks/useNote";
 
 type DeleteNoteButtonProps = {
   noteId: string;
-  deleteNoteLocally: (noteId: string) => void;
 };
-function DeleteNoteButton({ noteId, deleteNoteLocally }: DeleteNoteButtonProps) {
+function DeleteNoteButton({ noteId}: DeleteNoteButtonProps) {
 
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const noteIdParam = useSearchParams().get("noteId") || "";
+
+  const {setNotesList} = useNote() || {};
 
   const handleDeleteNote = async () => {
 
@@ -40,7 +42,9 @@ function DeleteNoteButton({ noteId, deleteNoteLocally }: DeleteNoteButtonProps) 
         return;
       }
       toast.success("Note deleted successfully");
-      deleteNoteLocally(noteId);
+      setNotesList && setNotesList((prevNotes) => 
+        prevNotes.filter(note => note.id !== noteId)
+      );
 
       if (noteIdParam === noteId) {
         router.replace("/");
@@ -50,11 +54,12 @@ function DeleteNoteButton({ noteId, deleteNoteLocally }: DeleteNoteButtonProps) 
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <Button variant="ghost" className="absolute top-1/2 right-2 size-7 -translate-y-1/2 p-0 opacity-0 group-hover/items:opacity-100 [&_svg]:size-3">
-          <Trash2 /></Button>
+        <Button variant="ghost" className="absolute top-1/2 right-2 size-7 -translate-y-1/2 p-0 group-hover/items:opacity-100 [&_svg]:size-3" >
+          <Trash2 className="text-amber-50 hover:text-red-500 transition-colors duration-100" /></Button>
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
+          <AlertCircleIcon className="mx-auto mb-4 text-red-500" size={48} />
           <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
           <AlertDialogDescription>
             This action cannot be undone. Your note will be lost forever.
@@ -62,7 +67,7 @@ function DeleteNoteButton({ noteId, deleteNoteLocally }: DeleteNoteButtonProps) 
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <AlertDialogAction onClick={handleDeleteNote} className="bg-destructive text-destructive hover:bg-destructive/90 w-24">Continue</AlertDialogAction>
+          <AlertDialogAction onClick={handleDeleteNote} className="bg-red-700 text-white hover:bg-red-800/90 w-24">{isPending ? <Loader2 className="animate-spin" /> : "Continue"}</AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

@@ -3,10 +3,8 @@ import { User } from "@supabase/supabase-js";
 import { Button } from "@/components/ui/button"
 import {
     Dialog,
-    DialogClose,
     DialogContent,
     DialogDescription,
-    DialogFooter,
     DialogHeader,
     DialogTitle,
     DialogTrigger,
@@ -14,7 +12,7 @@ import {
 import { Fragment, useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { Textarea } from "../ui/textarea";
-import { ArrowUpIcon } from "lucide-react";
+import { ArrowUpIcon, FileQuestionMarkIcon, FileXIcon, Loader2, RocketIcon } from "lucide-react";
 import { generateNoteWithGeminiAction } from "@/app/actions/ai";
 import "@/app/styles/ai-response.css";
 import "@/app/styles/custom-scrollbar.css";
@@ -22,6 +20,7 @@ import { handleKeyDown, scrollToBottom } from "@/lib/utils";
 import { toast } from "sonner";
 import { createNoteForUser } from "@/app/actions/notes";
 import { v4 as uuidv4 } from "uuid";
+import useNote from "@/hooks/useNote";
 
 type Props = {
     user: User | null;
@@ -39,6 +38,8 @@ function generateNoteWithAIComponent({ user }: Props) {
     const textareRef = useRef<HTMLTextAreaElement>(null);
     const contentRef = useRef<HTMLDivElement>(null);
     const [loading, setLoading] = useState(false);
+
+    const {setNotesList } = useNote() || {};
 
     const handleOnOpenChange = (isOpen: boolean) => {
         if (!user) {
@@ -89,19 +90,29 @@ function generateNoteWithAIComponent({ user }: Props) {
         })
     }
 
-    const handleSaveNote = async() => {
+    const handleSaveNote = async () => {
         try {
-        setLoading(true);
-        const uuid = uuidv4();
+            setLoading(true);
+            const uuid = uuidv4();
 
-        // Call server action that derives the user from server-side auth.
-        await createNoteForUser(uuid, response);
-        router.push(`/?noteId=${uuid}`);
+            // Call server action that derives the user from server-side auth.
+            await createNoteForUser(uuid, response);
+            setNotesList && user && setNotesList((prevNotes) =>
+                    [{ id: uuid, text: response, authorId: user.id, createdAt: new Date(), updatedAt: new Date() }, ...prevNotes]
+                );
+            router.push(`/?noteId=${uuid}`);
 
-        toast.success("New note created");
-        setLoading(false);
-        toast.success("Note saved successfully!");
-        setOpen(false);
+            // let result = await getNotesForUser();
+
+            // if (result instanceof Array) {
+            //     setNotesList && setNotesList(result);
+            // } else {
+            //     toast.error("Error fetching notes: " + result);
+            // }
+
+            setLoading(false);
+            toast.success("Note saved successfully!");
+            setOpen(false);
         } catch (error) {
             console.error("Error saving generated note:", error);
             toast.error("Failed to save generated note");
@@ -114,7 +125,7 @@ function generateNoteWithAIComponent({ user }: Props) {
         <Dialog open={open} onOpenChange={handleOnOpenChange}>
             <form>
                 <DialogTrigger asChild>
-                    <Button variant="default">Generate notes</Button>
+                    <Button variant="default"><RocketIcon size={16} /> Generate notes</Button>
                 </DialogTrigger>
                 <DialogContent className="custom-scrollbar flex flex-col h-[85vh] max-w-4xl overflow-y-auto" ref={contentRef}>
                     <DialogHeader>
@@ -159,14 +170,16 @@ function generateNoteWithAIComponent({ user }: Props) {
                                 </Button>
                             </>
                         ) : (<>
-                            <p className="text-muted-foreground">Do you wish to save this generated note?</p>
-                            <div className="mt-4 flex gap-2">
+                        <div className="flex items-center justify-center gap-2">
+                            <p className="text-muted-foreground"><FileQuestionMarkIcon size={16} /> Do you wish to save this generated note?</p>
+                            <div className="mt-4 flex gap-2 justify-around">
                                 <Button
                                     variant="default"
                                     onClick={handleSaveNote}
-                                        
+                                    className="w-25"
+
                                 >
-                                    Save Note
+                                    {loading ? <Loader2 className="animate-spin" /> : <> <RocketIcon size={16} /> Save Note</>}
                                 </Button>
                                 <Button
                                     variant="outline"
@@ -175,16 +188,14 @@ function generateNoteWithAIComponent({ user }: Props) {
                                         setOpen(false);
                                     }}
                                 >
+                                    <FileXIcon size={16} />
                                     Discard
                                 </Button>
                             </div>
+
+                        </div>
                         </>)}
                     </div>
-                    <DialogFooter>
-                        <DialogClose asChild>
-                            <Button variant="outline">Cancel</Button>
-                        </DialogClose>
-                    </DialogFooter>
                 </DialogContent>
             </form>
         </Dialog>

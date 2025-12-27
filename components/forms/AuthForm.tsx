@@ -9,6 +9,7 @@ import { Button } from "../ui/button";
 import { Eye, EyeClosed, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { loginUserAction, registerUserAction } from "@/app/actions/users";
+import useNote from "@/hooks/useNote";
 
 type Props = {
     type: "login" | "register";
@@ -21,6 +22,8 @@ const AuthForm = ({ type }: Props) => {
     const [isPendingLogin, startLoginTransition] = React.useTransition();
     const [showPassword, setShowPassword] = React.useState(false);
 
+    const {setUserAuthenticated} = useNote();
+
     const handleSubmit = (form: FormData) => {
         startLoginTransition(async () => {
             const email = form.get("email") as string;
@@ -32,6 +35,8 @@ const AuthForm = ({ type }: Props) => {
                 errorMessage = (await loginUserAction(email, password)).errorMessage;
                 title = "Logged In";
                 description = "You have successfully logged in.";
+                // Clear notes list on login to trigger refetch
+                setUserAuthenticated && setUserAuthenticated(true);
                 router.replace("/");
             }
             else {

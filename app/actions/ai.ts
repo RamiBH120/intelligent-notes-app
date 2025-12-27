@@ -11,7 +11,7 @@ import { GoogleGenAI } from "@google/genai";
 // The SDK automatically uses the GEMINI_API_KEY environment variable
 const ai = new GoogleGenAI({});
 
-
+// Ask Gemini AI about user's notes
 export async function askOpenAIAboutNotesAction(questions: string[], responses: string[]) {
     try {
         const user = await getUser();
@@ -108,6 +108,7 @@ export async function askOpenAIAboutNotesAction(questions: string[], responses: 
     }
 }
 
+// Ask Gemini AI about user's notes
 export async function askGeminiAboutNotesAction(questions: string[], responses: string[]) {
     try {
         const user = await getUser();
@@ -227,7 +228,7 @@ export async function generateNoteWithGeminiAction(topic: string) {
           Assume the topic is related to the user's goals and ambitions. 
         The note should be brief and straight to the point in a todo checklist of tasks format without going into much details.
         Make sure that your answer is not too verbose and you speak succinctly. 
-          Your response MUST be formatted in clean, valid HTML with proper structure. 
+          Your responses MUST be formatted in clean, valid HTML with proper structure. 
           Use tags like <p>, <strong>, <em>, <ul>, <ol>, <li>, <h1> to <h6>, and <br> when appropriate. 
           Do NOT wrap the entire response in a single <p> tag unless it's a single paragraph. 
           Avoid inline styles, JavaScript, or custom attributes.
@@ -274,7 +275,7 @@ export async function generateNoteWithGeminiAction(topic: string) {
         if (noteText.startsWith("I'm sorry")) {
             throw new Error(noteText);
         }
-        
+
         return noteText;
     } catch (error) {
         throw handleError(error);

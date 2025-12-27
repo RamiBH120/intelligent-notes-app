@@ -7,6 +7,7 @@ import { debounceDelay } from "@/lib/constants";
 import useNote from "@/hooks/useNote";
 import { updateNoteAction } from "@/app/actions/notes";
 import "@/app/styles/custom-scrollbar.css";
+import { filterHtmlTags } from "@/lib/utils";
 
 type Props = {
     noteId: string | string[] | undefined | null;
@@ -23,7 +24,7 @@ function NoteTextInput({ noteId, startingNoteText }: Props) {
     useEffect(() => {
 
         if (noteIdParam === noteId) {
-            setNoteText(startingNoteText || "");
+            setNoteText(filterHtmlTags(startingNoteText || ""));
         }
     }, [startingNoteText, noteId, noteIdParam, setNoteText]);
 

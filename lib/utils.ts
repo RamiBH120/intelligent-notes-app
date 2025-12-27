@@ -36,3 +36,7 @@ export const handleKeyDown = async (e: React.KeyboardEvent, handleSubmit: (e: Re
         handleSubmit(e);
     }
 }
+
+export const filterHtmlTags = (text: string) => {
+    return text.replace(/<\/?[^>]+(>|$)/g, "");
+}
