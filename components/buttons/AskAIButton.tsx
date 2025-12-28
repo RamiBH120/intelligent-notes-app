@@ -9,14 +9,14 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog"
-import { Fragment, useRef, useState, useTransition } from "react";
+import { Fragment, use, useCallback, useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { Textarea } from "../ui/textarea";
 import { ArrowUpIcon, NotebookTabsIcon } from "lucide-react";
 import { askGeminiAboutNotesAction } from "@/app/actions/ai";
 import "@/app/styles/ai-response.css";
 import "@/app/styles/custom-scrollbar.css";
-import { handleKeyDown, scrollToBottom } from "@/lib/utils";
+import { handleClickInput, handleKeyDown, scrollToBottom } from "@/lib/utils";
 import { toast } from "sonner";
 
 type Props = {
@@ -32,7 +32,7 @@ function AskAIButton({ user }: Props) {
 
     const [isPending, startTransition] = useTransition();
 
-    const handleOnOpenChange = (isOpen: boolean) => {
+    const handleOnOpenChange = useCallback((isOpen: boolean) => {
         if (!user) {
             router.push('/login');
         }
@@ -46,24 +46,22 @@ function AskAIButton({ user }: Props) {
             }
             setOpen(isOpen);
         }
-    }
+    }, [user, router]);
 
     const textareRef = useRef<HTMLTextAreaElement>(null);
     const contentRef = useRef<HTMLDivElement>(null);
 
-    const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const handleInputChange = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
+        setQuestionText(e.target.value);
         const textarea = textareRef.current;
         if (textarea) {
             textarea.style.height = "auto";
             textarea.style.height = textarea.scrollHeight + "px";
         }
     }
+    , []);
 
-    const handleClickInput = () => {
-        textareRef.current?.focus();
-    }
-
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = useCallback((e: React.FormEvent) => {
         if (!questionText.trim()) return;
 
         const newQuestions = [...questions, questionText.trim()];
@@ -82,7 +80,7 @@ function AskAIButton({ user }: Props) {
                 toast.error(`Failed to get AI response: ${error.message}`);
             }
         })
-    }
+    }, [questionText, questions, responses]);
 
     
 
@@ -109,11 +107,11 @@ function AskAIButton({ user }: Props) {
                                 )}
                             </Fragment>
                         ))}
-                        {isPending && (<p className="animate-pulse text-sm">Thinking...</p>)}
+                        {isPending && (<p className="animate-pulse text-sm">Analyzing your notes...</p>)}
                     </div>
                     <div
                         className="mt-auto flex cursor-text flex-col rounded-lg border p-4"
-                        onClick={handleClickInput}
+                        onClick={() => handleClickInput(textareRef)}
                     >
                         <Textarea
                             ref={textareRef}
@@ -127,10 +125,10 @@ function AskAIButton({ user }: Props) {
                             }}
                             placeholder="Ask me anything about your past notes..."
                             className="placeholder:text-muted-foreground p-0 resize-none rounded-none border-none
-                                focus-visible:ring-0 focus-visible:ring-offset-0 bg-accent-foreground shadow-none"
+                                focus-visible:ring-0 focus-visible:ring-offset-0 bg-gray-500 shadow-none"
                             rows={1}
                         />
-                        <Button className="ml-auto rounded-full size-8">
+                        <Button className="ml-auto rounded-full size-8" onClick={handleSubmit}>
                             <ArrowUpIcon className="text-background" />
                         </Button>
                     </div>

@@ -18,8 +18,7 @@ export async function getNotesForUser() {
             },
             orderBy: {
                 updatedAt: 'desc',
-            },
-            take: 10,
+            }
         });
 
         return notes;

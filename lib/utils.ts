@@ -1,4 +1,5 @@
 import { clsx, type ClassValue } from "clsx"
+import { useCallback } from "react";
 import { twMerge } from "tailwind-merge"
 
 export function cn(...inputs: ClassValue[]) {
@@ -38,5 +39,11 @@ export const handleKeyDown = async (e: React.KeyboardEvent, handleSubmit: (e: Re
 }
 
 export const filterHtmlTags = (text: string) => {
-    return text.replace(/<\/?[^>]+(>|$)/g, "");
+    // include # to be filtered and ` and html tags
+    return text.replace(/<\/?[^>]+(>|$)|[#*`<>]/g, "");
+}
+
+
+export const handleClickInput = (textareRef: React.RefObject<HTMLTextAreaElement | null>) => {
+    textareRef.current?.focus();
 }

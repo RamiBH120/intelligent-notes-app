@@ -9,14 +9,14 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog"
-import { Fragment, useRef, useState, useTransition } from "react";
+import { Fragment, useCallback, useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { Textarea } from "../ui/textarea";
 import { ArrowUpIcon, FileQuestionMarkIcon, FileXIcon, Loader2, RocketIcon } from "lucide-react";
 import { generateNoteWithGeminiAction } from "@/app/actions/ai";
 import "@/app/styles/ai-response.css";
 import "@/app/styles/custom-scrollbar.css";
-import { handleKeyDown, scrollToBottom } from "@/lib/utils";
+import { handleClickInput, handleKeyDown, scrollToBottom } from "@/lib/utils";
 import { toast } from "sonner";
 import { createNoteForUser } from "@/app/actions/notes";
 import { v4 as uuidv4 } from "uuid";
@@ -41,7 +41,7 @@ function generateNoteWithAIComponent({ user }: Props) {
 
     const {setNotesList } = useNote() || {};
 
-    const handleOnOpenChange = (isOpen: boolean) => {
+    const handleOnOpenChange = useCallback((isOpen: boolean) => {
         if (!user) {
             router.push('/login');
         }
@@ -55,22 +55,20 @@ function generateNoteWithAIComponent({ user }: Props) {
             }
             setOpen(isOpen);
         }
-    }
+    }, [user, router]);
 
-    const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const handleInputChange = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
+        setQuestionText(e.target.value);
         const textarea = textareRef.current;
         if (textarea) {
             textarea.style.height = "auto";
             textarea.style.height = textarea.scrollHeight + "px";
         }
     }
-
-    const handleClickInput = () => {
-        textareRef.current?.focus();
-    }
+    , []);
 
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = useCallback((e: React.FormEvent) => {
         if (!questionText.trim()) return;
         e.preventDefault();
         setQuestion(questionText.trim());
@@ -88,9 +86,9 @@ function generateNoteWithAIComponent({ user }: Props) {
                 toast.error(`Failed to generate notes: ${error.message}`);
             }
         })
-    }
+    }, [questionText]);
 
-    const handleSaveNote = async () => {
+    const handleSaveNote = useCallback(async () => {
         try {
             setLoading(true);
             const uuid = uuidv4();
@@ -119,19 +117,19 @@ function generateNoteWithAIComponent({ user }: Props) {
         } finally {
             setLoading(false);
         }
-    }
+    }, [response, router, setNotesList, user]);
 
     return (
         <Dialog open={open} onOpenChange={handleOnOpenChange}>
             <form>
                 <DialogTrigger asChild>
-                    <Button variant="default"><RocketIcon size={16} /> Generate notes</Button>
+                    <Button variant="default"><RocketIcon size={16} /> Generate a note</Button>
                 </DialogTrigger>
                 <DialogContent className="custom-scrollbar flex flex-col h-[85vh] max-w-4xl overflow-y-auto" ref={contentRef}>
                     <DialogHeader>
-                        <DialogTitle>Generate Notes with AI</DialogTitle>
+                        <DialogTitle>Generate a Note with AI</DialogTitle>
                         <DialogDescription>
-                            Ask AI to generate notes for you based on a topic or prompt.
+                            Ask AI to generate a note for you based on a topic or prompt.
                         </DialogDescription>
                     </DialogHeader>
                     <div className="flex flex-col gap-8 mt-4">
@@ -142,11 +140,11 @@ function generateNoteWithAIComponent({ user }: Props) {
                                     dangerouslySetInnerHTML={{ __html: response }} />
                             )}
                         </Fragment>
-                        {isPending && (<p className="animate-pulse text-sm">Thinking...</p>)}
+                        {isPending && (<p className="animate-pulse text-sm">Generating your note...</p>)}
                     </div>
                     <div
                         className="mt-auto flex cursor-text flex-col rounded-lg border p-4"
-                        onClick={handleClickInput}
+                        onClick={() => handleClickInput(textareRef)}
                     >
                         {!response ? (
                             <>
@@ -162,17 +160,17 @@ function generateNoteWithAIComponent({ user }: Props) {
                                     }}
                                     placeholder="Ask me about your goals and wishes..."
                                     className="placeholder:text-muted-foreground p-0 resize-none rounded-none border-none
-                                focus-visible:ring-0 focus-visible:ring-offset-0 bg-transparent shadow-none"
+                                focus-visible:ring-0 focus-visible:ring-offset-0 bg-gray-500 shadow-none"
                                     rows={1}
                                 />
-                                <Button className="ml-auto rounded-full size-8">
+                                <Button className="ml-auto rounded-full size-8" onClick={handleSubmit}>
                                     <ArrowUpIcon className="text-background" />
                                 </Button>
                             </>
                         ) : (<>
-                        <div className="flex items-center justify-center gap-2">
-                            <p className="text-muted-foreground"><FileQuestionMarkIcon size={16} /> Do you wish to save this generated note?</p>
-                            <div className="mt-4 flex gap-2 justify-around">
+                        <div className="flex flex-col items-center justify-center gap-2">
+                            <p className="text-muted-foreground inline-flex items-center gap-1"><FileQuestionMarkIcon size={16} /> <span>Do you wish to save this generated note?</span></p>
+                            <div className="mt-4 flex flex-row gap-2 justify-between">
                                 <Button
                                     variant="default"
                                     onClick={handleSaveNote}
