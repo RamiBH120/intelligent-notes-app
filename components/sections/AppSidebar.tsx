@@ -6,7 +6,6 @@ import {
   SidebarGroup,
   SidebarGroupLabel,
 } from "@/components/ui/sidebar"
-import Link from "next/link";
 import SidebarGroupContent from "./SidebarGroupContent";
 import "@/app/styles/custom-scrollbar.css";
 import { getNotesForUser } from "@/app/actions/notes";
@@ -24,7 +23,6 @@ function AppSidebar() {
     const fetchNotes = async () => {
       // Only attempt to fetch notes when we know the user is authenticated.
       // If the user is explicitly unauthenticated, clear notes silently.
-      console.log("notes list",notesList);
       
       
       if (userAuthenticated !== true) {
@@ -37,7 +35,6 @@ function AppSidebar() {
       try {
         setLoading(true);
         const result = await getNotesForUser();
-        setLoading(false);
 
         if (result instanceof Array) {
           setNotesList && setNotesList(result);
@@ -53,6 +50,9 @@ function AppSidebar() {
         console.error("Unexpected error fetching notes:", err);
         setNotesList && setNotesList([]);
         toast.error("Error fetching notes");
+      }
+      finally {
+        setLoading(false);
       }
     };
 
@@ -72,7 +72,7 @@ function AppSidebar() {
 
         <SidebarGroup>
           <SidebarGroupLabel className="mb-2 mt-2 text-lg">
-            {userAuthenticated === true && !loading ? (
+            {!loading ? (
               notesList && notesList.length > 0 ? `(${notesList.length}) Recent Notes` : "You have no notes yet"
             ) :(
               <div className="flex items-center gap-2 text-center mx-auto"><Loader2 className="animate-spin" /> <span>Loading...</span></div>

@@ -40,7 +40,7 @@ function SidebarGroupContent() {
             <Input className="bg-muted pl-8" placeholder="Search notes..." value={searchText} onChange={handleSearchText} />
         </div>
         <SidebarMenu className="mt-4">
-            {notesList?.length === 0 ? (<Loader2 className="animate-spin text-center mx-auto" />) : (filteredNotes?.map((note: Note,index) => (
+            {notesList && notesList.length > 0 && (filteredNotes?.map((note: Note,index) => (
 
                 <SidebarMenuItem key={note.id} className="group/item">
                     {/* <Link href={`/?noteId=${note.id}`} className="w-full">

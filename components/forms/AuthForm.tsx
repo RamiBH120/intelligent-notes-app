@@ -36,6 +36,8 @@ const AuthForm = ({ type }: Props) => {
                 title = "Logged In";
                 description = "You have successfully logged in.";
                 router.replace("/");
+                // Clear notes list on login to trigger refetch
+                setUserAuthenticated && setUserAuthenticated(true);
             }
             else {
                 errorMessage = (await registerUserAction(email, password)).errorMessage;
@@ -51,8 +53,6 @@ const AuthForm = ({ type }: Props) => {
                 else
                     router.replace("/login");
             } else {
-                // Clear notes list on login to trigger refetch
-                setUserAuthenticated && setUserAuthenticated(true);
                 toast.success(title, {
                     description: description,
                 });

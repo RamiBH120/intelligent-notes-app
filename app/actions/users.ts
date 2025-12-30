@@ -5,74 +5,78 @@ import { createClient } from "../auth/server";
 import { prisma } from "@/lib/prisma";
 
 export async function loginUserAction(email: string, password: string) {
-    try {
-        const { auth } = await createClient();
+  try {
+    const { auth } = await createClient();
 
-        const { error } = await auth.signInWithPassword({
-            email,
-            password,
-        });
+    const { error } = await auth.signInWithPassword({
+      email,
+      password,
+    });
 
-        if (error) throw error;
+    if (error) throw error;
 
-        return {
-            errorMessage: null,
-        };
+    return {
+      errorMessage: null,
+    };
 
-    } catch (error) {
-        return handleError(error);
-    }
+  } catch (error) {
+    return handleError(error);
+  }
 }
 
 export async function logoutUserAction() {
-    try {
-        const { auth } = await createClient();
+  try {
+    const { auth } = await createClient();
 
-        const { error } = await auth.signOut();
+    const { error } = await auth.signOut();
 
-        if (error) throw error;
+    if (error) throw error;
 
-        return {
-            errorMessage: null,
-        };
+    return {
+      errorMessage: null,
+    };
 
-    } catch (error) {
-        return handleError(error);
-    }
+  } catch (error) {
+    return handleError(error);
+  }
 }
 
 export async function registerUserAction(email: string, password: string) {
-    try {
-        const { auth } = await createClient();
+  try {
+    const { auth } = await createClient();
 
-        const { data, error } = await auth.signUp({
-            email,
-            password,
-        });
-        if (error) throw error;
+    const { data, error } = await auth.signUp({
+      email,
+      password,
+      options: {
+        // The user will be redirected to this URL after clicking the email link
+        emailRedirectTo: `${process.env.NEXT_PUBLIC_URL}/login`,
+      },
+    });
+    if (error) throw error;
 
-        let userId = data.user?.id;
-        if (!userId) throw new Error("User ID not found after registration");
+    let userId = data.user?.id;
+    if (!userId) throw new Error("User ID not found after registration");
 
-        await prisma.user.create({
-            data: {
-                id: userId,
-                email: email,
-            },
-        });
-        return {
-            errorMessage: null,
-        };
+    await prisma.user.create({
+      data: {
+        id: userId,
+        email: email,
+      },
+    });
+    return {
+      errorMessage: null,
+    };
 
-    } catch (error) {
-        return handleError(error);
-    }
+  } catch (error) {
+    return handleError(error);
+  }
 }
 
 export async function ensureUserExists() {
   const { auth } = await createClient();
   const { data, error } = await auth.getUser();
-  
+
   if (error || !data.user) {
     console.error("Authentication error:", error?.message);
     return null;
@@ -94,7 +98,7 @@ export async function ensureUserExists() {
         // createdAt is automatic with @default(now())
       }
     });
-    
+
     return dbUser;
   } catch (e: any) {
     if (e.code === 'P2002') {
@@ -102,13 +106,13 @@ export async function ensureUserExists() {
       console.error('User sync error: Email already exists with different ID');
       console.error('Supabase ID:', supabaseUser.id);
       console.error('Email:', supabaseUser.email);
-      
+
       // Find the conflicting user
       const existing = await prisma.user.findUnique({
         where: { email: supabaseUser.email! }
       });
       console.error('Existing DB ID:', existing?.id);
-      
+
       throw new Error('User synchronization conflict. Please contact support.');
     }
     throw e;
