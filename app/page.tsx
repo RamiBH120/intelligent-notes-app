@@ -3,7 +3,6 @@ import { getUser } from "./auth/server";
 import { prisma } from "@/lib/prisma";
 import NewNoteButton from "@/components/buttons/NewNoteButton";
 import NoteTextInput from "@/components/forms/NoteTextInput";
-import GenerateNotesWithAI from "@/components/buttons/GenerateNotesWithAI";
 
 type Props = {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
@@ -27,8 +26,8 @@ export default async function Home({ searchParams }: Props) {
   return (
     <div className="flex flex-col items-center h-full gap-4">
       <div className="flex w-full max-w-4xl justify-end gap-2">
-        <GenerateNotesWithAI user={user} />
-        <AskAIButton user={user} />
+        <AskAIButton user={user} isAskingAI={false} />
+        <AskAIButton user={user} isAskingAI={true} />
         <NewNoteButton user={user} />
       </div>
 

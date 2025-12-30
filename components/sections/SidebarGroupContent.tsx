@@ -40,13 +40,13 @@ function SidebarGroupContent() {
             <Input className="bg-muted pl-8" placeholder="Search notes..." value={searchText} onChange={handleSearchText} />
         </div>
         <SidebarMenu className="mt-4">
-            {notesList?.length === 0 ? (<Loader2 className="animate-spin text-center mx-auto" />) : (filteredNotes?.map((note: Note) => (
+            {notesList?.length === 0 ? (<Loader2 className="animate-spin text-center mx-auto" />) : (filteredNotes?.map((note: Note,index) => (
 
                 <SidebarMenuItem key={note.id} className="group/item">
                     {/* <Link href={`/?noteId=${note.id}`} className="w-full">
                     {note?.text?.slice(0, 30) || "Untitled Note"}
                     </Link> */}
-                    <SelectNoteButton note={note} />
+                    <SelectNoteButton note={note} index={index + 1} />
                     <DeleteNoteButton noteId={note?.id}/>
                 </SidebarMenuItem>
             )))}

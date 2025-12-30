@@ -55,7 +55,7 @@ function DeleteNoteButton({ noteId}: DeleteNoteButtonProps) {
     <AlertDialog>
       <AlertDialogTrigger asChild>
         <Button variant="ghost" className="absolute top-1/2 right-2 size-7 -translate-y-1/2 p-0 group-hover/items:opacity-100 [&_svg]:size-3" >
-          <Trash2 className="text-amber-50 hover:text-red-500 transition-colors duration-100" /></Button>
+          <Trash2 className="hover:text-red-500 transition-colors duration-100" /></Button>
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
@@ -67,7 +67,7 @@ function DeleteNoteButton({ noteId}: DeleteNoteButtonProps) {
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <AlertDialogAction onClick={handleDeleteNote} className="bg-red-700 text-white hover:bg-red-800/90 w-24">{isPending ? <Loader2 className="animate-spin" /> : "Continue"}</AlertDialogAction>
+          <AlertDialogAction onClick={handleDeleteNote} className="bg-red-700 text-white hover:bg-red-800/90">{isPending ? <Loader2 className="animate-spin" /> : "Continue"}</AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

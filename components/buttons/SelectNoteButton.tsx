@@ -9,9 +9,10 @@ import { filterHtmlTags } from "@/lib/utils";
 
 type SelectNoteButtonProps = {
     note: Note;
+    index: number;
 };
 
-function SelectNoteButton({ note }: SelectNoteButtonProps) {
+function SelectNoteButton({ note, index }: SelectNoteButtonProps) {
 
     const noteId = useSearchParams().get("noteId") || "";
 
@@ -39,7 +40,7 @@ function SelectNoteButton({ note }: SelectNoteButtonProps) {
     return (
         <SidebarMenuButton asChild className={`items-start gap-2 pr-12 ${noteId === note.id && "bg-sidebar-accent/50 text-primary"}`}>
             <Link href={`/?noteId=${note.id}`} className="flex flex-col w-full h-fit py-2">
-                <p className="w-full overflow-hidden truncate text-ellipsis whitespace-nowrap">{noteTextToDisplay !== "" ? filterHtmlTags(noteTextToDisplay) : "Untitled Note"}</p>
+                <p className="w-full overflow-hidden truncate text-ellipsis whitespace-nowrap">{`${index}. ${filterHtmlTags(noteTextToDisplay)}` || "Untitled Note"}</p>
                 <p className="text-muted-foreground text-xs">{note.createdAt.toLocaleDateString()}</p>
             </Link>
         </SidebarMenuButton>

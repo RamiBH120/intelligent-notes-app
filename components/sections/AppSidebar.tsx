@@ -61,6 +61,11 @@ function AppSidebar() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userAuthenticated]);
 
+  if (userAuthenticated === null || !userAuthenticated) {
+    // While we don't know the authentication status yet, don't render the sidebar.
+    return null;
+  }
+
   return (
     <Sidebar>
       <SidebarContent className="custom-scrollbar">
@@ -69,11 +74,7 @@ function AppSidebar() {
           <SidebarGroupLabel className="mb-2 mt-2 text-lg">
             {userAuthenticated === true && !loading ? (
               notesList && notesList.length > 0 ? `(${notesList.length}) Recent Notes` : "You have no notes yet"
-            ) : userAuthenticated === false ? (
-              <p className="text-sm text-justify mt-2">
-                <Link href="/login" className="underline">Please log in</Link> to see your notes
-              </p>
-            ) : (
+            ) :(
               <div className="flex items-center gap-2 text-center mx-auto"><Loader2 className="animate-spin" /> <span>Loading...</span></div>
             )}
           </SidebarGroupLabel>

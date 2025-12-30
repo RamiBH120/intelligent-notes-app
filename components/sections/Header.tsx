@@ -5,16 +5,18 @@ import { LogoutButton } from "../buttons/LogoutButton";
 import { getUser } from "@/app/auth/server";
 import { SidebarTrigger } from "../ui/sidebar";
 import { DoorOpenIcon, InfoIcon, LogInIcon, NotebookPenIcon, PhoneCallIcon, UserCircleIcon } from "lucide-react";
+import UserInformation from "../buttons/UserInformation";
 
 
 const Header = async () => {
   const user = await getUser();
   return (
     <header className="relative flex h-24 w-full px-3 sm:px-8 items-center justify-between bg-popover shadow-sm">
-      <SidebarTrigger variant={"default"} size={"icon-lg"} className=" absolute left-1 top-0 bottom-0 my-auto active:bg-muted" />
-      <Link href="/" className="flex items-center gap-2 px-2.5 md:px-3 mx-1 md:mx-2 my-auto w-2xl ml-3" >
-        <NotebookPenIcon size={32} className="text-blue-500 hover:text-blue-200 ml-3 transition-all duration-150" />
-        <h1 className="flex flex-col text-amber-50 md:text-2xl font-semibold">Intelligent <span className="text-blue-500">Notes App</span></h1>
+
+      {user && <SidebarTrigger variant={"default"} size={"icon-lg"} className=" absolute left-1 top-0 bottom-0 my-auto active:bg-muted" />} 
+      <Link href={ user ? "/" : "/home"} className="flex items-center gap-2 px-2.5 md:px-3 mx-1 md:mx-2 my-auto w-2xl ml-3 text-indigo-500 hover:text-indigo-400 transition-all duration-150" >
+        <NotebookPenIcon size={32} className=" ml-3 " />
+        <h1 className="flex flex-col md:text-2xl font-semibold">Intelligent <span className="text-indigo-400">Notes App</span></h1>
       </Link>
       <div className="flex gap-4 items-center">
         <span className="hidden md:flex gap-4">
@@ -25,7 +27,7 @@ const Header = async () => {
         {user ? (
           <>
             <LogoutButton />
-            <UserCircleIcon size={32} className="text-lime-600" />
+            <UserInformation user={user} />
           </>
         ) : (
           <>

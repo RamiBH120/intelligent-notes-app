@@ -123,7 +123,7 @@ export async function updateSession(request: NextRequest) {
     const { user } = await safeGetUser();
 
     if (!user) {
-      return NextResponse.redirect(new URL("/login", origin));
+      return NextResponse.redirect(new URL("/home", origin));
     }
 
     if (!searchParams.get("noteId")) {
