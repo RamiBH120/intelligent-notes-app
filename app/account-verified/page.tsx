@@ -1,10 +1,11 @@
 import AuthForm from "@/components/forms/AuthForm";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { appName } from "@/lib/constants";
 import { CheckCircle } from "lucide-react";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: 'Account Verified - Intelligent Notes App', // The title for the page
+  title: `Account Verified - ${appName}`, // The title for the page
   description: 'Your account has been successfully verified. Please log in to continue.', // Optional: also good for SEO
 };
 

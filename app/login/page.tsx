@@ -1,11 +1,12 @@
 import AuthForm from "@/components/forms/AuthForm";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
+import { appName } from "@/lib/constants";
 import { LogInIcon } from "lucide-react";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: 'Login - Intelligent Notes App', // The title for the page
-  description: 'Login to your account to access the Intelligent Notes App.', // Optional: also good for SEO
+  title: `Login - ${appName}`, // The title for the page
+  description: `Login to your account to access ${appName}.`, // Optional: also good for SEO
 };
 
 

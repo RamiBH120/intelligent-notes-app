@@ -1,10 +1,11 @@
 import AuthForm from "@/components/forms/AuthForm";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { appName } from "@/lib/constants";
 import { LockIcon } from "lucide-react";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: 'Link Expired - Intelligent Notes App', // The title for the page
+  title: `Link Expired - ${appName}`, // The title for the page
   description: 'The link has expired. Please log in again to receive a new link in your email.', // Optional: also good for SEO
 };
 

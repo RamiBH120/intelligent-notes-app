@@ -187,7 +187,7 @@ function AskAIButton({ user, isAskingAI }: Props) {
                                 )}
                             </Fragment>
                         )}
-                        {isPending && (<p className="animate-pulse text-sm">{isAskingAI ? "Analyzing your notes..." : "Generating your response..."}</p>)}
+                        {isPending && (<p className="animate-pulse text-sm">{isAskingAI ? "Analyzing your notes..." : "Generating your note..."}</p>)}
                     </div>
                     <div
                         className="mt-auto flex cursor-text flex-col rounded-lg border p-4"

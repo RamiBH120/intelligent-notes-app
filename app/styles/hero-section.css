@@ -21,20 +21,14 @@ hero-section {
     }
 }
 
-.hero-photo{
-    position: relative;
-    height: auto;
-}
+.hero-photo {
 
-.hero-photo::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: -1;
-    background-image: url("https://images.unsplash.com/photo-1517842645767-c639042777db?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8bm90ZSUyMHRha2luZ3xlbnwwfHwwfHx8MA%3D%3D");
-    background-size: cover;
-    mask-image: linear-gradient(90deg, transparent 0%, indigo 100%);
+    background-image: 
+        linear-gradient(to right, rgba(27, 41, 87, 0.7), rgba(24, 14, 36, 0.8)),
+        url("https://images.unsplash.com/photo-1517842645767-c639042777db?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8bm90ZSUyMHRha2luZ3xlbnwwfHwwfHx8MA%3D%3D");
+    
+    background-size: cover;          /* Ensures the image covers the whole container */
+    background-position: center;     /* Centers the image within the container */
+    background-repeat: no-repeat;    /* Prevents the image from tiling */
+
 }

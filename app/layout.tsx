@@ -7,9 +7,10 @@ import { SidebarProvider } from "@/components/ui/sidebar";
 import AppSidebar from "@/components/sections/AppSidebar";
 import { NoteProvider } from "./providers/NoteProvider";
 import Footer from "@/components/sections/Footer";
+import { appName } from "@/lib/constants";
 
 export const metadata: Metadata = {
-  title: "Intelligent Notes App",
+  title: `${appName}`,
 };
 
 export default function RootLayout({
